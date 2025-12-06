@@ -92,7 +92,7 @@ class MediaController extends ApiController
             $deleted = $this->mediaService->delete($medium);
 
             if (!$deleted) {
-                return $this->error('Không thể xoá media', 500);
+                return $this->error('Không thể xóa media', 500);
             }
 
             return $this->success(null, 'Media deleted successfully');
