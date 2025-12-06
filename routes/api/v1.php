@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\V1\PostController;
 use App\Http\Controllers\Api\V1\MediaController;
 use App\Http\Controllers\Api\V1\SettingController;
 use App\Http\Controllers\Api\V1\InvoiceController;
+use App\Http\Controllers\Api\PublicInvoiceController;
 
 /*
 |--------------------------------------------------------------------------
@@ -20,6 +21,9 @@ use App\Http\Controllers\Api\V1\InvoiceController;
 Route::middleware('api')->group(function () {
     // Public settings
     Route::get('/settings', [SettingController::class, 'show'])->name('settings.show');
+
+    // Public invoice lookup (no auth required)
+    Route::post('/public/invoices/lookup', [PublicInvoiceController::class, 'lookup'])->name('invoices.lookup');
 
     // Public auth routes
     Route::prefix('auth')->group(function () {
