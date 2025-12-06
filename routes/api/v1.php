@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\V1\UserController;
 use App\Http\Controllers\Api\V1\PostController;
 use App\Http\Controllers\Api\V1\MediaController;
 use App\Http\Controllers\Api\V1\SettingController;
+use App\Http\Controllers\Api\V1\InvoiceController;
 
 /*
 |--------------------------------------------------------------------------
@@ -39,6 +40,7 @@ Route::middleware('api')->group(function () {
             Route::apiResource('users', UserController::class);
             Route::apiResource('posts', PostController::class);
             Route::apiResource('media', MediaController::class);
+            Route::apiResource('invoices', InvoiceController::class);
             Route::post('/settings', [SettingController::class, 'store'])->name('settings.store');
             Route::put('/settings', [SettingController::class, 'update'])->name('settings.update');
         });
