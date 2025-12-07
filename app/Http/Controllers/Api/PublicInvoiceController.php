@@ -19,8 +19,8 @@ class PublicInvoiceController extends ApiController
             'seller_tax_code' => 'required|string|max:50',
             'invoice_code' => 'required|string|max:100',
         ], [
-            'seller_tax_code.required' => 'Vui long nhap ma so thue ben ban.',
-            'invoice_code.required' => 'Vui long nhap ma nhan hoa don.',
+            'seller_tax_code.required' => 'Vui lòng nhập mã số thuế bên bán.',
+            'invoice_code.required' => 'Vui lòng nhập mã nhận hóa đơn.',
         ]);
 
         if ($validator->fails()) {
@@ -32,12 +32,12 @@ class PublicInvoiceController extends ApiController
             ->first();
 
         if (!$invoice) {
-            return $this->notFound('Khong tim thay hoa don. Vui long kiem tra lai thong tin.');
+            return $this->notFound('Không tìm thấy hóa đơn. Vui lòng kiểm tra lại thông tin.');
         }
 
         return $this->success(
             new InvoiceResource($invoice),
-            'Tim thay hoa don thanh cong!'
+            'Tìm thấy hóa đơn thành công!'
         );
     }
 
