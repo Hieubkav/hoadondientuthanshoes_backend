@@ -24,7 +24,10 @@ class InvoiceController extends ApiController
     {
         try {
             $perPage = (int) $request->get('per_page', 15);
-            $invoices = $this->invoiceService->list($perPage);
+            $sortBy = $request->get('sort_by');
+            $sortDirection = $request->get('sort_direction', 'asc');
+
+            $invoices = $this->invoiceService->list($perPage, $sortBy, $sortDirection);
 
             return $this->success(
                 InvoiceResource::collection($invoices),

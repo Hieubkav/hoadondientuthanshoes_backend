@@ -15,9 +15,9 @@ class InvoiceService extends BaseService
     /**
      * Get paginated invoices.
      */
-    public function list(int $perPage = 15)
+    public function list(int $perPage = 15, ?string $sortBy = null, string $sortDirection = 'asc')
     {
-        return $this->invoices->paginate($perPage);
+        return $this->invoices->paginateWithSort($perPage, $sortBy, $sortDirection);
     }
 
     /**

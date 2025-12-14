@@ -4,10 +4,11 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 /**
  * Base API Controller
- * 
+ *
  * Provides common response methods for all API controllers
  */
 class ApiController extends Controller
@@ -20,11 +21,28 @@ class ApiController extends Controller
         string $message = 'Success',
         int $statusCode = 200
     ): JsonResponse {
-        return response()->json([
+        $response = [
             'success' => true,
             'message' => $message,
-            'data' => $data,
-        ], $statusCode);
+        ];
+
+        // Check if data is a paginated resource collection
+        if ($data instanceof AnonymousResourceCollection && $data->resource instanceof \Illuminate\Pagination\AbstractPaginator) {
+            $paginator = $data->resource;
+            $response['data'] = [
+                'data' => $data->resolve(),
+                'meta' => [
+                    'current_page' => $paginator->currentPage(),
+                    'last_page' => $paginator->lastPage(),
+                    'per_page' => $paginator->perPage(),
+                    'total' => $paginator->total(),
+                ],
+            ];
+        } else {
+            $response['data'] = $data;
+        }
+
+        return response()->json($response, $statusCode);
     }
 
     /**

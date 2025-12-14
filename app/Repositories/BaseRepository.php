@@ -40,6 +40,24 @@ abstract class BaseRepository implements BaseRepositoryInterface
     }
 
     /**
+     * Get paginated records with sorting
+     */
+    public function paginateWithSort(int $perPage = 15, ?string $sortBy = null, string $sortDirection = 'asc'): LengthAwarePaginator
+    {
+        $query = $this->model->newQuery();
+
+        $allowedSortFields = array_merge($this->model->getFillable(), ['created_at', 'updated_at']);
+
+        if ($sortBy && in_array($sortBy, $allowedSortFields)) {
+            $query->orderBy($sortBy, $sortDirection === 'desc' ? 'desc' : 'asc');
+        } else {
+            $query->latest();
+        }
+
+        return $query->paginate($perPage);
+    }
+
+    /**
      * Find record by ID
      */
     public function find(int|string $id): ?Model
