@@ -43,6 +43,7 @@ Route::middleware('api')->group(function () {
         Route::middleware('admin')->group(function () {
             Route::apiResource('users', UserController::class);
             Route::apiResource('posts', PostController::class);
+            Route::get('/media/{medium}/download', [MediaController::class, 'download'])->name('media.download');
             Route::apiResource('media', MediaController::class);
             Route::apiResource('invoices', InvoiceController::class);
             Route::post('/settings', [SettingController::class, 'store'])->name('settings.store');

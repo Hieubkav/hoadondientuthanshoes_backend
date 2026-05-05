@@ -9,6 +9,7 @@ use App\Http\Requests\Media\MediaUpdateRequest;
 use App\Http\Resources\MediaResource;
 use App\Services\MediaService;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\File;
 use Spatie\MediaLibrary\MediaCollections\Models\Media;
 
 class MediaController extends ApiController
@@ -81,6 +82,23 @@ class MediaController extends ApiController
         } catch (\Exception $e) {
             return $this->error($e->getMessage(), 500);
         }
+    }
+
+    /**
+     * Tải file media gốc.
+     */
+    public function download(Media $medium)
+    {
+        $path = $medium->getPath();
+
+        if (! $path || ! File::exists($path)) {
+            abort(404);
+        }
+
+        return response()->file($path, [
+            'Content-Type' => $medium->mime_type ?: 'application/octet-stream',
+            'Content-Disposition' => 'inline; filename="'.$medium->file_name.'"',
+        ]);
     }
 
     /**
