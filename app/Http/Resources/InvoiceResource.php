@@ -2,7 +2,6 @@
 
 namespace App\Http\Resources;
 
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 class InvoiceResource extends BaseResource
@@ -34,9 +33,9 @@ class InvoiceResource extends BaseResource
 
         $image = ltrim($this->image, '/');
 
-        // Nếu đã là absolute URL thì dùng trực tiếp.
+        // Nếu đã là absolute URL cùng backend cPanel thì chuẩn hóa sang public/storage.
         if (Str::startsWith($image, ['http://', 'https://'])) {
-            return $image;
+            return $this->resolveAbsoluteImageUrl($image);
         }
 
         // Nếu lỡ lưu kèm 'storage/' thì bỏ đi để Storage::url không thêm lần nữa.
@@ -44,6 +43,26 @@ class InvoiceResource extends BaseResource
             $image = substr($image, strlen('storage/'));
         }
 
-        return Storage::url($image);
+        if (Str::startsWith($image, 'public/storage/')) {
+            $image = substr($image, strlen('public/storage/'));
+        }
+
+        return url('public/storage/'.$image);
+    }
+
+    private function resolveAbsoluteImageUrl(string $image): string
+    {
+        $url = parse_url($image);
+        $path = ltrim($url['path'] ?? '', '/');
+
+        if (! Str::startsWith($path, ['storage/', 'public/storage/'])) {
+            return $image;
+        }
+
+        $path = Str::startsWith($path, 'storage/')
+            ? substr($path, strlen('storage/'))
+            : substr($path, strlen('public/storage/'));
+
+        return url('public/storage/'.$path);
     }
 }
