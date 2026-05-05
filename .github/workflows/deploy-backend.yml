@@ -1,0 +1,64 @@
+name: Deploy Backend to Vietnix via FTP
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Checkout source
+      - name: Checkout source code
+        uses: actions/checkout@v4
+
+      # 2. Setup PHP 8.2 (khớp với server cPanel)
+      - name: Setup PHP 8.2
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: "8.2"
+          extensions: mbstring, bcmath, ctype, json, openssl, pdo, pdo_mysql, tokenizer, xml, curl, fileinfo, gd, intl
+          coverage: none
+
+      # 3. Cache Composer dependencies
+      - name: Cache Composer packages
+        id: composer-cache
+        uses: actions/cache@v4
+        with:
+          path: vendor
+          key: ${{ runner.os }}-php-${{ hashFiles('**/composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-php-
+
+      # 4. Cài dependencies production (không cài dev packages)
+      - name: Install Composer dependencies (production)
+        run: composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader
+
+      # 5. FTP deploy lên cPanel Vietnix
+      - name: Deploy files to Vietnix via FTP
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          server-dir: ${{ secrets.FTP_SERVER_DIR }}
+          exclude: |
+            **/.git*
+            **/.git*/**
+            **/.github/**
+            **/node_modules/**
+            **/tests/**
+            **/storage/logs/**
+            **/storage/framework/cache/**
+            **/storage/framework/sessions/**
+            **/storage/framework/views/**
+            **/.env
+            **/.env.*
+            **/README.md
+            **/phpunit.xml
+            **/AGENTS.md
+            **/.editorconfig
+            **/.factory/**
+            **/docs/**
