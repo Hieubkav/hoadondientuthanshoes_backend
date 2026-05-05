@@ -8,7 +8,7 @@ php_value memory_limit 512M
     RewriteEngine On
 
     # Serve Laravel public storage files directly on cPanel
-    RewriteRule ^storage/(.*)$ storage/app/public/$1 [L]
+    RewriteRule ^storage/(.*)$ public/storage/$1 [L]
 
     RewriteCond %{REQUEST_FILENAME} -d [OR]
     RewriteCond %{REQUEST_FILENAME} -f
